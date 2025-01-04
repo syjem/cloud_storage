@@ -8,11 +8,14 @@ import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Meta, Google, Apple } from '@/components/svgs';
 import { formSchema, formSubmit } from '@/utils/submit-form';
+import { useNavigate } from 'react-router-dom';
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<'div'>) {
+  const navigate = useNavigate();
+
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -33,11 +36,12 @@ export function LoginForm({
       const response = await formSubmit(data);
       console.log(response);
 
-      toast.success('Signed in', {
-        description: 'Welcome back!',
+      toast.success('Signed in as', {
+        description: response.user.email,
       });
 
       form.reset();
+      navigate('/dashboard');
     } catch (error) {
       toast.error('Login failed.', {
         description: 'Please check your credentials and try again.',
@@ -55,7 +59,7 @@ export function LoginForm({
               <div className="flex flex-col items-center gap-1 text-center">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
                 <p className="text-balance text-muted-foreground text-sm">
-                  Login to your Cloud Storage
+                  Login to your Fuckin' App
                 </p>
               </div>
               <div className="grid gap-2">
@@ -65,7 +69,6 @@ export function LoginForm({
                   type="email"
                   name="email"
                   placeholder="m@gmail.com"
-                  required
                   autoComplete="off"
                 />
               </div>
@@ -83,7 +86,6 @@ export function LoginForm({
                   id="password"
                   type="password"
                   name="password"
-                  required
                   autoComplete="off"
                 />
               </div>
