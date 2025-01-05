@@ -18,7 +18,6 @@ export const formSubmit = async (formData: formSchema) => {
     if (!res.ok) throw new Error(`Request failed: ${res.status}`);
 
     const data = await res.json();
-    console.log(data);
     return data;
   } catch (error) {
     console.error(error);

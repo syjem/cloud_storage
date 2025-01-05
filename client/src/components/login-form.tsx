@@ -1,57 +1,19 @@
-import React from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Link } from 'react-router-dom';
-import { toast } from 'sonner';
 import { Meta, Google, Apple } from '@/components/svgs';
-import { formSchema, formSubmit } from '@/utils/submit-form';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<'div'>) {
-  const navigate = useNavigate();
+type LoginFormProps = {
+  className?: string;
+  submitHandler: (e: React.FormEvent<HTMLFormElement>) => void;
+};
 
-  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
-
-    const data: formSchema = {
-      email: formData.get('email')?.toString() || '',
-      password: formData.get('password')?.toString() || '',
-    };
-
-    if (!data.email || !data.password) {
-      toast.error('Please fill out all fields.');
-      return;
-    }
-
-    try {
-      const response = await formSubmit(data);
-      console.log(response);
-
-      toast.success('Signed in as', {
-        description: response.user.email,
-      });
-
-      form.reset();
-      navigate('/dashboard');
-    } catch (error) {
-      toast.error('Login failed.', {
-        description: 'Please check your credentials and try again.',
-      });
-      console.error('Error submitting the form:', error);
-    }
-  };
-
+export function LoginForm({ className, submitHandler }: LoginFormProps) {
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
+    <div className={cn('flex flex-col gap-6', className)}>
       <Card className="overflow-hidden">
         <CardContent className="grid p-0 md:grid-cols-2">
           <form onSubmit={submitHandler} className="p-6 md:p-8">
