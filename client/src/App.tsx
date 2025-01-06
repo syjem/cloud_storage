@@ -9,14 +9,14 @@ import { useAuthStore } from './stores/auth';
 import React from 'react';
 
 function App() {
+  const session = useAuthStore((state) => state.session);
+
   const PrivateRoute = ({ children }: { children: React.ReactElement }) => {
-    const session = useAuthStore((state) => state.session);
     return session ? children : <Navigate to="/" replace />;
   };
 
   const PublicRoute = ({ children }: { children: React.ReactElement }) => {
-    const session = useAuthStore((state) => state.session);
-    return session ? <Navigate to="/dashboard" replace /> : children;
+    return session ? <Navigate to="/app" replace /> : children;
   };
 
   const router = createBrowserRouter([
@@ -29,7 +29,7 @@ function App() {
       ),
     },
     {
-      path: '/dashboard',
+      path: '/app',
       element: (
         <PrivateRoute>
           <Dashboard />

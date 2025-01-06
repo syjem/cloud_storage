@@ -1,39 +1,53 @@
-import { Button } from '@/components/ui/button';
-import { useAuthStore } from '@/stores/auth';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import { AppSidebar } from '@/components/app-sidebar';
+import { ModeToggle } from '@/components/mode-toggle';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
+import { Separator } from '@/components/ui/separator';
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from '@/components/ui/sidebar';
 
 const Dashboard = () => {
-  const navigate = useNavigate();
-  const clearAuth = useAuthStore((state) => state.clearAuth);
-  const user = useAuthStore((state) => state.user);
-
-  const handleLogout = async () => {
-    try {
-      const res = await fetch('http://127.0.0.1:5000/api/sign_out');
-      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-
-      const data = await res.json();
-      toast.success(data.message);
-      clearAuth();
-      navigate('/');
-    } catch (error) {
-      console.error(error);
-      toast.error('Failed to logout');
-    }
-  };
-
   return (
-    <div className="p-32 flex flex-col gap-4">
-      <h1 className="dark:text-slate-50 text-3xl">Authenticated Page</h1>
-      <hr className="dark:border-slate-60 border-slate-20 my-4" />
-      <p className="dark:text-slate-50 text-lg">
-        Welcome, {user?.email}! You are {user?.role}.
-      </p>
-      <Button onClick={handleLogout} className="w-1/4">
-        Logout
-      </Button>
-    </div>
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink href="#">Images</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Personal</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+          <ModeToggle />
+        </header>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+            <div className="aspect-video rounded-xl bg-muted/50" />
+            <div className="aspect-video rounded-xl bg-muted/50" />
+            <div className="aspect-video rounded-xl bg-muted/50" />
+          </div>
+          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 };
 

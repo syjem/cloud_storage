@@ -1,6 +1,7 @@
 from flask import jsonify
 from flask_restful import Resource
 
+
 class Home(Resource):
     def get(self):
 
@@ -21,6 +22,11 @@ class Home(Resource):
                 "description": "Sign in with Email and Password",
                 "body": ["email", "password"]
             },
+            {
+                "method": "GET",
+                "url": "/api/sign_out",
+                "description": "Sign out the current user"
+            }
         ]
 
         return jsonify(routes)

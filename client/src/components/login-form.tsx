@@ -32,6 +32,7 @@ export function LoginForm({ className, submitHandler }: LoginFormProps) {
                   name="email"
                   placeholder="m@gmail.com"
                   autoComplete="off"
+                  value="jemuel.work@gmail.com"
                 />
               </div>
               <div className="grid gap-2">
@@ -48,7 +49,7 @@ export function LoginForm({ className, submitHandler }: LoginFormProps) {
                   id="password"
                   type="password"
                   name="password"
-                  autoComplete="off"
+                  value="admin:jemuel"
                 />
               </div>
               <Button type="submit" className="w-full">
@@ -75,7 +76,7 @@ export function LoginForm({ className, submitHandler }: LoginFormProps) {
               </div>
               <div className="text-center text-sm">
                 Don&apos;t have an account?{' '}
-                <Link to="/dashboard" className="underline underline-offset-4">
+                <Link to="/app" className="underline underline-offset-4">
                   Sign in as a guest
                 </Link>
               </div>
