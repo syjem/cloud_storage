@@ -45,12 +45,7 @@ export function LoginForm({ className, submitHandler }: LoginFormProps) {
                     Forgot your password?
                   </a>
                 </div>
-                <Input
-                  id="password"
-                  type="password"
-                  name="password"
-                  value="admin:jemuel"
-                />
+                <Input id="password" type="password" name="password" />
               </div>
               <Button type="submit" className="w-full">
                 Login
