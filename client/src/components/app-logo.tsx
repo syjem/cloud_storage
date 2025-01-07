@@ -16,7 +16,12 @@ export function AppLogo() {
             <ServerCrash className="size-4" />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold">Server Crash</span>
+            <span className="truncate font-semibold">
+              Server Crash
+              <em className="font-bold line-through ml-[2px] text-primary">
+                ed
+              </em>
+            </span>
           </div>
         </SidebarMenuButton>
       </SidebarMenuItem>

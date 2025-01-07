@@ -4,66 +4,62 @@ export const data = {
   navMain: [
     {
       title: 'Images',
-      url: '#',
+      url: '/images',
       icon: ImageUp,
       isActive: true,
       items: [
         {
           title: 'Personal',
-          url: '#',
+          url: '/images/personal',
         },
         {
-          title: 'Screen Shots',
-          url: '#',
+          title: 'Screenshots',
+          url: '/images/screenshots',
         },
         {
           title: 'Important',
-          url: '#',
+          url: '/images/important',
         },
       ],
     },
     {
       title: 'Files',
-      url: '#',
+      url: '/files',
       icon: FolderInput,
       items: [
         {
           title: 'Work',
-          url: '#',
+          url: '/files/work',
         },
         {
-          title: 'Confidential',
-          url: '#',
+          title: 'Private',
+          url: '/files/private',
         },
       ],
     },
     {
       title: 'Emails',
-      url: '#',
+      url: '/emails',
       icon: MailCheck,
       items: [
         {
           title: 'Inbox',
-          url: '#',
+          url: '/emails/inbox',
         },
         {
           title: 'Trash',
-          url: '#',
+          url: '/emails/trash',
         },
       ],
     },
     {
       title: 'Links',
-      url: '#',
+      url: '/links',
       icon: Link2,
       items: [
         {
           title: 'Visited',
-          url: '#',
-        },
-        {
-          title: 'History',
-          url: '#',
+          url: '/links/visited',
         },
       ],
     },

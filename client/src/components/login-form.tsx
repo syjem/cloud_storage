@@ -71,7 +71,7 @@ export function LoginForm({ className, submitHandler }: LoginFormProps) {
               </div>
               <div className="text-center text-sm">
                 Don&apos;t have an account?{' '}
-                <Link to="/app" className="underline underline-offset-4">
+                <Link to="/images" className="underline underline-offset-4">
                   Sign in as a guest
                 </Link>
               </div>

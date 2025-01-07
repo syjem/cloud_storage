@@ -32,7 +32,7 @@ const SignInPage = () => {
       setSession(response.session);
 
       form.reset();
-      navigate('/app');
+      navigate('/images');
       toast.success('Signed in');
     } catch (error) {
       toast.error('Login failed.', {
