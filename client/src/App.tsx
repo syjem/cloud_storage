@@ -4,9 +4,8 @@ import Files from '@/pages/files';
 import Work from '@/pages/files/work';
 import PrivateFiles from '@/pages/files/private';
 import Images from '@/pages/images';
-import Personal from '@/pages/images/personal';
 import Screenshots from '@/pages/images/screenshots';
-import Important from '@/pages/images/important';
+import Uploader from '@/pages/images/uploader';
 import Emails from '@/pages/emails';
 import Inbox from '@/pages/emails/inbox';
 import Trash from '@/pages/emails/trash';
@@ -15,6 +14,7 @@ import PrivateRoute from '@/pages/private-route';
 import PublicRoute from '@/pages/public-route';
 import Links from '@/pages/links';
 import Visited from '@/pages/links/visited';
+import Favorites from '@/pages/images/favorites';
 
 function App() {
   const router = createBrowserRouter([
@@ -40,9 +40,9 @@ function App() {
           path: 'images',
           element: <Images />,
           children: [
-            { path: 'personal', element: <Personal /> },
             { path: 'screenshots', element: <Screenshots /> },
-            { path: 'important', element: <Important /> },
+            { path: 'upload', element: <Uploader /> },
+            { path: 'favorites', element: <Favorites /> },
           ],
         },
         {

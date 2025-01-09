@@ -1,10 +1,10 @@
 import axios from 'axios';
 import useSWR from 'swr';
 
+const url = 'http://localhost:5000/api/images';
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
-const url = 'http://localhost:5000/api/images/screen_shots';
 
-const Screenshots = () => {
+export const ImageGallery = () => {
   const { data, error, isLoading } = useSWR(url, fetcher, {
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
@@ -17,7 +17,7 @@ const Screenshots = () => {
     return <p>No images found.</p>;
 
   return (
-    <div className="min-h-[100vh] flex-1 rounded-xl md:min-h-min">
+    <div className="flex flex-col gap-4 flex-1">
       <div className="flex gap-4">
         {data.data.map((imageUrl: string, index: number) => (
           <div key={index} className="">
@@ -32,5 +32,3 @@ const Screenshots = () => {
     </div>
   );
 };
-
-export default Screenshots;

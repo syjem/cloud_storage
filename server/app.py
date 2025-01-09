@@ -16,7 +16,7 @@ api = Api(app)
 api.add_resource(Home, "/", "/home")
 api.add_resource(SignIn, "/api/sign_in")
 api.add_resource(SignOut, "/api/sign_out")
-api.add_resource(Images, "/api/images", "/api/images/")
+api.add_resource(Images, "/api/images")
 api.add_resource(ScreenShots, "/api/images/screen_shots")
 
 

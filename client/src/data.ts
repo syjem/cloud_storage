@@ -1,4 +1,11 @@
-import { MailCheck, FolderInput, Link2, ImageUp } from 'lucide-react';
+import {
+  MailCheck,
+  FolderInput,
+  Link2,
+  ImageUp,
+  Wallpaper,
+  Star,
+} from 'lucide-react';
 
 export const data = {
   navMain: [
@@ -9,16 +16,14 @@ export const data = {
       isActive: true,
       items: [
         {
-          title: 'Personal',
-          url: '/images/personal',
+          title: 'Favorites',
+          url: '/images/favorites',
+          icon: Star,
         },
         {
           title: 'Screenshots',
           url: '/images/screenshots',
-        },
-        {
-          title: 'Important',
-          url: '/images/important',
+          icon: Wallpaper,
         },
       ],
     },
