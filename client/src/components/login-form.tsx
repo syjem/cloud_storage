@@ -32,7 +32,7 @@ export function LoginForm({ className, submitHandler }: LoginFormProps) {
                   name="email"
                   placeholder="m@gmail.com"
                   autoComplete="off"
-                  value="jemuel.work@gmail.com"
+                  defaultValue="jemuel.work@gmail.com"
                 />
               </div>
               <div className="grid gap-2">
@@ -47,7 +47,9 @@ export function LoginForm({ className, submitHandler }: LoginFormProps) {
                 </div>
                 <Input id="password" type="password" name="password" />
               </div>
-              <Button type="submit" className="w-full">
+              <Button
+                type="submit"
+                className="w-full disabled:bg-primary/50 disabled:text-primary-foreground">
                 Login
               </Button>
               <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">

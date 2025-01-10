@@ -9,17 +9,9 @@ interface User {
   lastSignedInAt: string;
 }
 
-interface Session {
-  accessToken: string;
-  expiresAt: string;
-  expiresIn: string;
-}
-
 interface AuthState {
   user: User | null;
-  session: Session | null;
   setUser: (user: User) => void;
-  setSession: (session: Session) => void;
   clearAuth: () => void;
 }
 
@@ -32,10 +24,8 @@ export const useAuthStore = create<
   persist(
     (set) => ({
       user: null,
-      session: null,
       setUser: (user) => set({ user }),
-      setSession: (session) => set({ session }),
-      clearAuth: () => set({ user: null, session: null }),
+      clearAuth: () => set({ user: null }),
     }),
     {
       name: 'auth-storage',

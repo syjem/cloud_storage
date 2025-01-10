@@ -8,7 +8,7 @@ from resources.sign_out import SignOut
 from resources.images import Images, ScreenShots
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 api = Api(app)
 
 

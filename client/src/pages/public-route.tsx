@@ -1,8 +1,8 @@
-import { useAuthStore } from '@/stores/auth';
+import { get_session } from '@/utils/get-session';
 import { Navigate } from 'react-router-dom';
 
 const PublicRoute = ({ children }: { children: React.ReactElement }) => {
-  const session = useAuthStore((state) => state.session);
+  const session = get_session();
   return session ? <Navigate to="/images" replace /> : children;
 };
 

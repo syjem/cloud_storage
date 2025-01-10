@@ -1,7 +1,9 @@
 import re
+import pytz
+from datetime import datetime, timezone
 
 from flask_restful import Resource, abort
-from flask import request, jsonify
+from flask import request, jsonify, make_response
 
 from storage import supabase
 
@@ -30,7 +32,7 @@ class SignIn(Resource):
             user = response.user
             session = response.session
 
-            return jsonify({
+            response_payload = {
                 "user": {
                     "id": user.id,
                     "email": user.email,
@@ -38,12 +40,31 @@ class SignIn(Resource):
                     "created_at": user.created_at,
                     "last_sign_in_at": user.last_sign_in_at
                 },
-                "session": {
-                    "access_token": session.access_token,
-                    "expires_in": session.expires_in,
-                    "expires_at": session.expires_at
-                }
-            })
+            }
+
+            res = make_response(jsonify(response_payload))
+
+            ph_tz = pytz.timezone('Asia/Manila')
+            expires_utc = datetime.fromtimestamp(
+                session.expires_at, tz=timezone.utc)
+            expires_ph = expires_utc.astimezone(ph_tz)
+
+            expires_str = expires_ph.strftime('%a, %d %b %Y %H:%M:%S GMT')
+
+            is_production = not request.is_secure
+
+            # Set Secure only if in production
+            cookie_settings = {
+                'expires': expires_str,
+                'httponly': True,
+                'samesite': 'None',
+                'secure': is_production,
+            }
+
+            res.set_cookie("sb_access_token",
+                           session.access_token, **cookie_settings)
+
+            return res
 
         except Exception as e:
             abort(500, error=str(e))

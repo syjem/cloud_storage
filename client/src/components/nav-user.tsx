@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {
   BadgeCheck,
   Bell,
@@ -27,9 +28,13 @@ import { useAuthStore } from '@/stores/auth';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
+const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+const baseUrl = import.meta.env.VITE_API_URL as string;
+const url = `${baseUrl}/api/sign_out`;
+
 export function NavUser() {
-  const navigate = useNavigate();
   const { isMobile } = useSidebar();
+  const navigate = useNavigate();
   const clearAuth = useAuthStore((state) => state.clearAuth);
 
   const user = useAuthStore((state) => state.user);
@@ -37,11 +42,8 @@ export function NavUser() {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:5000/api/sign_out');
-      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-
-      const data = await res.json();
-      toast.success(data.message);
+      const response = await fetcher(url);
+      toast.success(response.message);
       clearAuth();
       navigate('/');
     } catch (error) {

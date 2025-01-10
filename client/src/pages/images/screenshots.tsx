@@ -2,7 +2,9 @@ import axios from 'axios';
 import useSWR from 'swr';
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
-const url = 'http://localhost:5000/api/images/screen_shots';
+
+const baseUrl = import.meta.env.VITE_API_URL as string;
+const url = `${baseUrl}/api/images/screen_shots`;
 
 const Screenshots = () => {
   const { data, error, isLoading } = useSWR(url, fetcher, {
