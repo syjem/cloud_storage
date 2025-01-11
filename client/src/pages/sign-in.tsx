@@ -1,27 +1,15 @@
+import { supabaseSignIn } from '@/auth/sign-in';
 import { LoginForm } from '@/components/login-form';
 import { ModeToggle } from '@/components/mode-toggle';
 import { useAuthStore } from '@/stores/auth';
 import { formSchema } from '@/utils/form-schema';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 const SignInPage = () => {
   const navigate = useNavigate();
   const setUser = useAuthStore((state) => state.setUser);
-
-  const baseUrl = import.meta.env.VITE_API_URL as string;
-  const url = `${baseUrl}/api/sign_in`;
-
-  const fetcher = async (formData: formSchema) => {
-    const response = await axios.post(url, formData, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      withCredentials: true,
-    });
-    return response.data;
-  };
+  const setSession = useAuthStore((state) => state.setSession);
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,14 +28,11 @@ const SignInPage = () => {
     }
 
     try {
-      toast.loading('Signing in...');
+      const { user, session } = await supabaseSignIn(data);
 
-      const response = await fetcher(data);
-
-      console.log('response:', response);
-
-      if (response) {
-        setUser(response.user);
+      if (user && session) {
+        setUser(user);
+        setSession(session);
 
         form.reset();
         navigate('/images');
@@ -58,8 +43,6 @@ const SignInPage = () => {
         description: 'Please check your credentials and try again.',
       });
       console.error('Error during login:', error);
-    } finally {
-      toast.dismiss();
     }
   };
 

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import {
   BadgeCheck,
   Bell,
@@ -26,29 +25,21 @@ import {
 } from '@/components/ui/sidebar';
 import { useAuthStore } from '@/stores/auth';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
-const baseUrl = import.meta.env.VITE_API_URL as string;
-const url = `${baseUrl}/api/sign_out`;
+import { supabaseSignOut } from '@/auth/sign-out';
 
 export function NavUser() {
   const { isMobile } = useSidebar();
   const navigate = useNavigate();
-  const clearAuth = useAuthStore((state) => state.clearAuth);
 
   const user = useAuthStore((state) => state.user);
   const name = user?.email.split('.')[0] as string;
 
   const handleLogout = async () => {
     try {
-      const response = await fetcher(url);
-      toast.success(response.message);
-      clearAuth();
+      await supabaseSignOut();
       navigate('/');
     } catch (error) {
-      console.error(error);
-      toast.error('Failed to logout');
+      console.error('Error during logout:', error);
     }
   };
 
@@ -72,7 +63,7 @@ export function NavUser() {
                 </span>
                 <span className="truncate text-xs">{user?.email}</span>
               </div>
-              <ChevronsUpDown className="ml-auto size-4" />
+              <ChevronsUpDown className="ml-auto size-4 text-primary" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent

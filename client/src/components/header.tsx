@@ -1,9 +1,7 @@
 import React from 'react';
-import { ModeToggle } from '@/components/mode-toggle';
 import {
   Breadcrumb,
   BreadcrumbItem,
-  // BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
@@ -11,6 +9,8 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { useLocation, Link } from 'react-router-dom';
+import { RefreshCw, Upload } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const Header = () => {
   const location = useLocation();
@@ -49,7 +49,21 @@ const Header = () => {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <ModeToggle />
+      <div className="flex items-center gap-2 ml-auto mr-4">
+        <Button
+          variant="ghost"
+          className="text-sm font-normal text-foreground hover:bg-muted/65">
+          <RefreshCw className="h-3 w-3 text-muted-foreground" />
+          Refresh
+        </Button>
+        <Separator orientation="vertical" className="h-5" />
+        <Button
+          variant="ghost"
+          className="text-sm font-normal text-foreground hover:bg-muted/65">
+          <Upload className="h-3 w-3 text-muted-foreground" />
+          Upload
+        </Button>
+      </div>
     </header>
   );
 };

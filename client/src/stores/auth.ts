@@ -1,17 +1,15 @@
 import { create } from 'zustand';
 import { persist, PersistOptions } from 'zustand/middleware';
-
-interface User {
-  id: string;
-  email: string;
-  role: string;
-  createdAt: string;
-  lastSignedInAt: string;
-}
+import type {
+  User as SupabaseUser,
+  Session as SupabaseSession,
+} from '@supabase/auth-js';
 
 interface AuthState {
-  user: User | null;
-  setUser: (user: User) => void;
+  user: SupabaseUser | null;
+  session: SupabaseSession | null;
+  setUser: (user: SupabaseUser) => void;
+  setSession: (session: SupabaseSession) => void;
   clearAuth: () => void;
 }
 
@@ -24,8 +22,10 @@ export const useAuthStore = create<
   persist(
     (set) => ({
       user: null,
+      session: null,
       setUser: (user) => set({ user }),
-      clearAuth: () => set({ user: null }),
+      setSession: (session) => set({ session }),
+      clearAuth: () => set({ user: null, session: null }),
     }),
     {
       name: 'auth-storage',

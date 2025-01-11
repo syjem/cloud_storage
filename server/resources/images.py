@@ -2,6 +2,9 @@ from flask import jsonify
 from flask_restful import Resource
 from storage import supabase
 
+from utils.format_date import format_date
+from utils.format_size import format_size
+
 
 class Images(Resource):
 
@@ -10,12 +13,19 @@ class Images(Resource):
 
         images = [file for file in response if file['id']]
 
-        images_url = [
-            supabase.storage.from_("images").get_public_url(file['name'])
+        image_data = [
+            {
+                "name": file["name"],
+                "created_at": format_date(file["created_at"]),
+                "type": file["metadata"]["mimetype"],
+                "size": format_size(file["metadata"]["size"]),
+                "last_modified_at": format_date(file["metadata"]["lastModified"]),
+                "url": supabase.storage.from_("images").get_public_url(file["name"])
+            }
             for file in images
         ]
 
-        return jsonify({"data": images_url})
+        return jsonify({"images": image_data})
 
 
 class ScreenShots(Resource):
@@ -27,7 +37,8 @@ class ScreenShots(Resource):
         )
 
         image_url = [
-            supabase.storage.from_("images").get_public_url(f"screen_shots/{file['name']}")
+            supabase.storage.from_("images").get_public_url(
+                f"screen_shots/{file['name']}")
             for file in response
         ]
 

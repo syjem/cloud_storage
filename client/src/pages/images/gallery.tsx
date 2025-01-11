@@ -1,5 +1,20 @@
 import axios from 'axios';
 import useSWR from 'swr';
+import LoaderSkeleton from './loading-state';
+import {
+  Download,
+  MoreHorizontal,
+  SquarePenIcon,
+  Trash2Icon,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -13,24 +28,94 @@ export const ImageGallery = () => {
     refreshInterval: 0,
   });
 
-  if (isLoading) return <p>Loading images...</p>;
-  if (error) return <p>Error fetching images.</p>;
-  if (!data || !data.data || data.data.length === 0)
+  if (isLoading) return <LoaderSkeleton />;
+  if (error) return <ImageGalleryTable images={data.images} />;
+  if (!data || !data.images || data.images.length === 0)
     return <p>No images found.</p>;
 
+  console.log(data);
+
+  return <ImageGalleryTable images={data.images} />;
+};
+
+const columns = ['Name', 'Size', 'Type', 'Created at', 'Last Modified at'];
+
+type ImageType = {
+  name: string;
+  size: number;
+  type: string;
+  url: string;
+  created_at: string;
+  last_modified_at: string;
+};
+
+const ImageGalleryTable = ({ images }: { images: ImageType[] }) => {
   return (
-    <div className="flex flex-col gap-4 flex-1">
-      <div className="flex gap-4">
-        {data.data.map((imageUrl: string, index: number) => (
-          <div key={index} className="">
-            <img
-              className="rounded-md aspect-square block max-w-full w-44"
-              src={imageUrl}
-              alt={`Image ${index + 1}`}
-            />
-          </div>
+    <section className="bg-background min-h-min">
+      <div className="grid grid-cols-5 p-4 border-b">
+        {columns.map((column) => (
+          <span key={column} className="text-sm font-medium text-foreground">
+            {column}
+          </span>
         ))}
       </div>
-    </div>
+      <ul className="divide-y">
+        {images.map((image: ImageType) => (
+          <li
+            key={image.name}
+            className="group grid grid-cols-5 cursor-pointer hover:bg-muted px-4">
+            <span className="flex items-center gap-2 text-sm text-muted-foreground py-4">
+              <img src={image.url} alt={image.name} width={25} height={25} />
+              {image.name}
+            </span>
+            <span className="text-sm text-muted-foreground py-4">
+              {image.size}
+            </span>
+            <span className="text-sm text-muted-foreground py-4">
+              {image.type}
+            </span>
+            <span className="text-sm text-muted-foreground py-4">
+              {image.created_at}
+            </span>
+            <div className="flex items-center justify-between pr-8">
+              <span className="text-sm text-muted-foreground py-4">
+                {image.last_modified_at}
+              </span>
+              <ImageTableDropDownMenu />
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+};
+
+const ImageTableDropDownMenu = () => {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        asChild
+        className="data-[state=open]:visible invisible group-hover:visible">
+        <Button size="icon" variant="ghost" className="text-muted-foreground">
+          <span className="sr-only">Open actions</span>
+          <MoreHorizontal className="h-4 w-4 rotate-90 " />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuItem>
+          <SquarePenIcon className="text-muted-foreground" />
+          Rename
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Download className="text-muted-foreground" />
+          Download
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>
+          <Trash2Icon className="text-muted-foreground" />
+          Delete
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };

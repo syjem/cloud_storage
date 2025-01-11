@@ -1,8 +1,7 @@
-export const get_session = () => {
-  const hasToken = document.cookie
-    .split('; ')
-    .some((cookie) => cookie.startsWith('sb_access_token='));
-  console.log('Session Token Present:', hasToken);
+// import { useAuthStore } from '@/stores/auth';
 
-  return hasToken;
-};
+// export const get_session = () => {
+//   const user = useAuthStore((state) => state.user);
+
+//   return hasToken;
+// };

@@ -12,8 +12,8 @@ const ImageLinks = ({ items }: { items: NavMainItem[] }) => {
           className={cn(
             'flex items-center justify-center gap-2 py-3 rounded-lg bg-muted hover:bg-muted/75'
           )}>
-          {item.icon && <item.icon className="w-5 h-5" />}
-          <span className="font-semibold">{item.title}</span>
+          {item.icon && <item.icon className="w-4 h-4 " />}
+          <span className="font-medium text-foreground">{item.title}</span>
         </Link>
       ))}
     </div>

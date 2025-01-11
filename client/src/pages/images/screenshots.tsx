@@ -1,5 +1,6 @@
 import axios from 'axios';
 import useSWR from 'swr';
+import LoaderSkeleton from './loading-state';
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -13,7 +14,7 @@ const Screenshots = () => {
     refreshInterval: 0,
   });
 
-  if (isLoading) return <p>Loading images...</p>;
+  if (isLoading) return <LoaderSkeleton />;
   if (error) return <p>Error fetching images.</p>;
   if (!data || !data.data || data.data.length === 0)
     return <p>No images found.</p>;
