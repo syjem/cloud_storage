@@ -1,6 +1,5 @@
-import { Check, List, RefreshCw, Upload } from 'lucide-react';
+import { Check, List, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,29 +8,33 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { useViewStore } from '@/stores/images-view';
+import { Link } from 'react-router-dom';
 
 export const HeaderActions = ({ pathname }: { pathname: string }) => {
+  const paths = pathname.split('/').filter(Boolean);
+
+  const uploadLink =
+    paths.includes('images') && paths.length > 1
+      ? `/${paths.join('/')}/upload`
+      : '/images/upload';
+
   return (
     <div className="flex items-center gap-2 ml-auto mr-4">
+      {paths.includes('images') && <DropDownViews />}
       <Button
         variant="ghost"
-        className="text-xs font-normal text-foreground hover:bg-background [&_svg]:size-3">
-        <RefreshCw className="text-muted-foreground" />
-        Refresh
-      </Button>
-      {pathname === '/images' && <DropdownMenuCheckboxes />}
-      <Separator orientation="vertical" className="h-5" />
-      <Button
-        variant="ghost"
-        className="text-xs font-normal text-foreground hover:bg-background [&_svg]:size-3">
-        <Upload className="text-muted-foreground" />
-        Upload
+        asChild
+        className="text-xs font-normal text-foreground dark:hover:bg-header-action [&_svg]:size-3">
+        <Link to={uploadLink}>
+          <Upload className="text-muted-foreground" />
+          Upload
+        </Link>
       </Button>
     </div>
   );
 };
 
-export function DropdownMenuCheckboxes() {
+export function DropDownViews() {
   const { view, setView } = useViewStore();
 
   return (
@@ -39,7 +42,7 @@ export function DropdownMenuCheckboxes() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="text-xs font-normal text-foreground hover:bg-background [&_svg]:size-3">
+          className="text-xs font-normal text-foreground dark:hover:bg-header-action [&_svg]:size-3">
           <List className="text-muted-foreground" />
           View
         </Button>

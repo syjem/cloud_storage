@@ -38,13 +38,22 @@ class ScreenShots(Resource):
             {"sortBy": {"column": "created_at", "order": "desc"}}
         )
 
-        image_url = [
-            supabase.storage.from_("images").get_public_url(
-                f"screen_shots/{file['name']}")
-            for file in response
+        images = [file for file in response if file['id']]
+        total_size = sum(file["metadata"]["size"] for file in images)
+
+        image_data = [
+            {
+                "name": file["name"],
+                "created_at": format_date(file["created_at"]),
+                "type": file["metadata"]["mimetype"],
+                "size": format_size(file["metadata"]["size"]),
+                "last_modified_at": format_date(file["metadata"]["lastModified"]),
+                "url": supabase.storage.from_("images").get_public_url(f"screen_shots/{file['name']}")
+            }
+            for file in images
         ]
 
-        return jsonify({"data": image_url})
+        return jsonify({"images": image_data, "total_size": format_size(total_size)})
 
 
 class Favorites(Resource):
@@ -55,10 +64,19 @@ class Favorites(Resource):
             {"sortBy": {"column": "created_at", "order": "desc"}}
         )
 
-        image_url = [
-            supabase.storage.from_("images").get_public_url(
-                f"screen_shots/{file['name']}")
-            for file in response
+        images = [file for file in response if file['id']]
+        total_size = sum(file["metadata"]["size"] for file in images)
+
+        image_data = [
+            {
+                "name": file["name"],
+                "created_at": format_date(file["created_at"]),
+                "type": file["metadata"]["mimetype"],
+                "size": format_size(file["metadata"]["size"]),
+                "last_modified_at": format_date(file["metadata"]["lastModified"]),
+                "url": supabase.storage.from_("images").get_public_url(f"favorites/{file['name']}")
+            }
+            for file in images
         ]
 
-        return jsonify({"data": image_url})
+        return jsonify({"images": image_data, "total_size": format_size(total_size)})

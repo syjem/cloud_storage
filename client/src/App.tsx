@@ -14,6 +14,7 @@ import PublicRoute from '@/pages/public-route';
 import Links from '@/pages/links';
 import Visited from '@/pages/links/visited';
 import Favorites from '@/pages/images/favorites';
+import { FileUploader } from '@/pages/images/uploader';
 
 function App() {
   const router = createBrowserRouter([
@@ -39,8 +40,17 @@ function App() {
           path: 'images',
           element: <Images />,
           children: [
-            { path: 'screenshots', element: <Screenshots /> },
-            { path: 'favorites', element: <Favorites /> },
+            {
+              path: 'screenshots',
+              element: <Screenshots />,
+              children: [{ path: 'upload', element: <FileUploader /> }],
+            },
+            {
+              path: 'favorites',
+              element: <Favorites />,
+              children: [{ path: 'upload', element: <FileUploader /> }],
+            },
+            { path: 'upload', element: <FileUploader /> },
           ],
         },
         {

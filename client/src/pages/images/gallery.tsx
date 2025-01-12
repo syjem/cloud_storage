@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useViewStore } from '@/stores/images-view';
+import { FileUploader } from '@/pages/images/uploader';
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -33,7 +34,7 @@ export const ImagesGalleryTable = () => {
   if (isLoading) return <LoaderSkeleton />;
   if (error) return <p>Error fetching images.</p>;
   if (!data || !data.images || data.images.length === 0)
-    return <p>No images found.</p>;
+    return <FileUploader />;
 
   return view === 'list' ? (
     <Table images={data.images} totalSize={data.total_size} />
@@ -53,7 +54,7 @@ type ImageType = {
   last_modified_at: string;
 };
 
-const Table = ({
+export const Table = ({
   images,
   totalSize,
 }: {
@@ -62,6 +63,7 @@ const Table = ({
 }) => {
   return (
     <section className="relative border rounded-t-md bg-background flex-1">
+      {/* Table header */}
       <div className="grid grid-cols-5 p-4 border-b">
         {columns.map((column) => (
           <span key={column} className="text-sm font-medium text-foreground">
@@ -69,6 +71,7 @@ const Table = ({
           </span>
         ))}
       </div>
+      {/* Table content */}
       <ul className="divide-y">
         {images.map((image: ImageType) => (
           <li
@@ -102,6 +105,7 @@ const Table = ({
           </li>
         ))}
       </ul>
+      {/* Table footer */}
       <div className="absolute bottom-0 bg-muted/75 px-4 py-1 w-full text-end">
         <span className="text-muted-foreground text-sm font-normal">
           {totalSize} for <strong>{images.length} items</strong>
@@ -117,7 +121,10 @@ const TableDropDownMenu = () => {
       <DropdownMenuTrigger
         asChild
         className="data-[state=open]:visible invisible group-hover:visible">
-        <Button size="icon" variant="ghost" className="text-muted-foreground">
+        <Button
+          size="icon"
+          variant="ghost"
+          className="text-muted-foreground hover:bg-inherit">
           <span className="sr-only">Open actions</span>
           <MoreHorizontal className="h-4 w-4 rotate-90 " />
         </Button>
@@ -141,7 +148,7 @@ const TableDropDownMenu = () => {
   );
 };
 
-const Gallery = ({ images }: { images: ImageType[] }) => {
+export const Gallery = ({ images }: { images: ImageType[] }) => {
   return (
     <div className="min-h-[100vh] flex-1 rounded-xl md:min-h-min">
       <div className="flex gap-4">
