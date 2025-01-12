@@ -9,15 +9,14 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { useLocation, Link } from 'react-router-dom';
-import { RefreshCw, Upload } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { HeaderActions } from '@/components/header-actions';
 
 const Header = () => {
   const location = useLocation();
   const pathSegments = location.pathname.split('/').filter(Boolean);
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+    <header className="flex shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 my-4">
       <div className="flex items-center gap-2 px-4">
         <SidebarTrigger className="-ml-1 text-primary hover:text-primary/75" />
         <Separator orientation="vertical" className="mr-2 h-4" />
@@ -49,21 +48,7 @@ const Header = () => {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <div className="flex items-center gap-2 ml-auto mr-4">
-        <Button
-          variant="ghost"
-          className="text-sm font-normal text-foreground hover:bg-muted/65">
-          <RefreshCw className="h-3 w-3 text-muted-foreground" />
-          Refresh
-        </Button>
-        <Separator orientation="vertical" className="h-5" />
-        <Button
-          variant="ghost"
-          className="text-sm font-normal text-foreground hover:bg-muted/65">
-          <Upload className="h-3 w-3 text-muted-foreground" />
-          Upload
-        </Button>
-      </div>
+      <HeaderActions pathname={location.pathname} />
     </header>
   );
 };

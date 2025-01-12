@@ -5,7 +5,6 @@ import Work from '@/pages/files/work';
 import PrivateFiles from '@/pages/files/private';
 import Images from '@/pages/images';
 import Screenshots from '@/pages/images/screenshots';
-import Uploader from '@/pages/images/uploader';
 import Emails from '@/pages/emails';
 import Inbox from '@/pages/emails/inbox';
 import Trash from '@/pages/emails/trash';
@@ -41,7 +40,6 @@ function App() {
           element: <Images />,
           children: [
             { path: 'screenshots', element: <Screenshots /> },
-            { path: 'upload', element: <Uploader /> },
             { path: 'favorites', element: <Favorites /> },
           ],
         },

@@ -2,7 +2,7 @@ import React from 'react';
 import { data } from '@/data';
 import Header from '@/components/header';
 import ImageLinks from '@/pages/images/image-links';
-import { ImageGallery } from '@/pages/images/gallery';
+import { ImagesGalleryTable } from '@/pages/images/gallery';
 import { Outlet, useLocation } from 'react-router-dom';
 
 const Images = () => {
@@ -16,7 +16,7 @@ const Images = () => {
         {location.pathname === '/images' && (
           <React.Fragment>
             <ImageLinks items={images.items} />
-            <ImageGallery />
+            <ImagesGalleryTable />
           </React.Fragment>
         )}
         <Outlet />

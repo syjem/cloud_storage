@@ -15,43 +15,53 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useViewStore } from '@/stores/images-view';
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 const baseUrl = import.meta.env.VITE_API_URL as string;
 const url = `${baseUrl}/api/images`;
 
-export const ImageGallery = () => {
+export const ImagesGalleryTable = () => {
   const { data, error, isLoading } = useSWR(url, fetcher, {
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
     refreshInterval: 0,
   });
+  const view = useViewStore((state) => state.view);
 
   if (isLoading) return <LoaderSkeleton />;
-  if (error) return <ImageGalleryTable images={data.images} />;
+  if (error) return <p>Error fetching images.</p>;
   if (!data || !data.images || data.images.length === 0)
     return <p>No images found.</p>;
 
-  console.log(data);
-
-  return <ImageGalleryTable images={data.images} />;
+  return view === 'list' ? (
+    <Table images={data.images} totalSize={data.total_size} />
+  ) : (
+    <Gallery images={data.images} />
+  );
 };
 
 const columns = ['Name', 'Size', 'Type', 'Created at', 'Last Modified at'];
 
 type ImageType = {
   name: string;
-  size: number;
+  size: string;
   type: string;
   url: string;
   created_at: string;
   last_modified_at: string;
 };
 
-const ImageGalleryTable = ({ images }: { images: ImageType[] }) => {
+const Table = ({
+  images,
+  totalSize,
+}: {
+  images: ImageType[];
+  totalSize: string;
+}) => {
   return (
-    <section className="bg-background min-h-min">
+    <section className="relative border rounded-t-md bg-background flex-1">
       <div className="grid grid-cols-5 p-4 border-b">
         {columns.map((column) => (
           <span key={column} className="text-sm font-medium text-foreground">
@@ -63,9 +73,15 @@ const ImageGalleryTable = ({ images }: { images: ImageType[] }) => {
         {images.map((image: ImageType) => (
           <li
             key={image.name}
-            className="group grid grid-cols-5 cursor-pointer hover:bg-muted px-4">
+            className="group grid grid-cols-5 cursor-pointer hover:bg-muted/75 px-4">
             <span className="flex items-center gap-2 text-sm text-muted-foreground py-4">
-              <img src={image.url} alt={image.name} width={25} height={25} />
+              <img
+                src={image.url}
+                alt={image.name}
+                width={20}
+                height={20}
+                className="max-w-full"
+              />
               {image.name}
             </span>
             <span className="text-sm text-muted-foreground py-4">
@@ -81,16 +97,21 @@ const ImageGalleryTable = ({ images }: { images: ImageType[] }) => {
               <span className="text-sm text-muted-foreground py-4">
                 {image.last_modified_at}
               </span>
-              <ImageTableDropDownMenu />
+              <TableDropDownMenu />
             </div>
           </li>
         ))}
       </ul>
+      <div className="absolute bottom-0 bg-muted/75 px-4 py-1 w-full text-end">
+        <span className="text-muted-foreground text-sm font-normal">
+          {totalSize} for <strong>{images.length} items</strong>
+        </span>
+      </div>
     </section>
   );
 };
 
-const ImageTableDropDownMenu = () => {
+const TableDropDownMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -117,5 +138,23 @@ const ImageTableDropDownMenu = () => {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+};
+
+const Gallery = ({ images }: { images: ImageType[] }) => {
+  return (
+    <div className="min-h-[100vh] flex-1 rounded-xl md:min-h-min">
+      <div className="flex gap-4">
+        {images.map((image: ImageType) => (
+          <div key={image.name} className="">
+            <img
+              className="rounded-md aspect-square block max-w-full w-44"
+              src={image.url}
+              alt={image.name}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
