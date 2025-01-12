@@ -13,6 +13,8 @@ class Images(Resource):
 
         images = [file for file in response if file['id']]
 
+        total_size = sum(file["metadata"]["size"] for file in images)
+
         image_data = [
             {
                 "name": file["name"],
@@ -25,7 +27,7 @@ class Images(Resource):
             for file in images
         ]
 
-        return jsonify({"images": image_data})
+        return jsonify({"images": image_data, "total_size": format_size(total_size)})
 
 
 class ScreenShots(Resource):
@@ -33,6 +35,23 @@ class ScreenShots(Resource):
     def get(self):
         response = supabase.storage.from_("images").list(
             "screen_shots",
+            {"sortBy": {"column": "created_at", "order": "desc"}}
+        )
+
+        image_url = [
+            supabase.storage.from_("images").get_public_url(
+                f"screen_shots/{file['name']}")
+            for file in response
+        ]
+
+        return jsonify({"data": image_url})
+
+
+class Favorites(Resource):
+
+    def get(self):
+        response = supabase.storage.from_("images").list(
+            "favorites",
             {"sortBy": {"column": "created_at", "order": "desc"}}
         )
 
