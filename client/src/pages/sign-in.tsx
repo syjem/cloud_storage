@@ -3,6 +3,7 @@ import { LoginForm } from '@/components/login-form';
 import { ModeToggle } from '@/components/mode-toggle';
 import { useAuthStore } from '@/stores/auth';
 import { formSchema } from '@/utils/form-schema';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -10,6 +11,7 @@ const SignInPage = () => {
   const navigate = useNavigate();
   const setUser = useAuthStore((state) => state.setUser);
   const setSession = useAuthStore((state) => state.setSession);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,6 +29,8 @@ const SignInPage = () => {
       return;
     }
 
+    setIsLoading(true);
+
     try {
       const { user, session } = await supabaseSignIn(data);
 
@@ -43,6 +47,8 @@ const SignInPage = () => {
         description: 'Please check your credentials and try again.',
       });
       console.error('Error during login:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -50,7 +56,7 @@ const SignInPage = () => {
     <div className="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
       <ModeToggle />
       <div className="w-full max-w-sm md:max-w-3xl">
-        <LoginForm submitHandler={submitHandler} />
+        <LoginForm isLoading={isLoading} submitHandler={submitHandler} />
       </div>
     </div>
   );

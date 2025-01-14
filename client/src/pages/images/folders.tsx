@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { NavMainItem } from '@/components/nav-main';
 import { cn } from '@/lib/utils';
 
-const ImageLinks = ({ items }: { items: NavMainItem[] }) => {
+const Folders = ({ items }: { items: NavMainItem[] }) => {
   return (
     <div className="grid auto-rows-min gap-2.5 md:gap-4 md:grid-cols-4">
       {items.map((item) => (
@@ -20,4 +20,4 @@ const ImageLinks = ({ items }: { items: NavMainItem[] }) => {
   );
 };
 
-export default ImageLinks;
+export default Folders;

@@ -5,25 +5,26 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Meta, Google, Apple } from '@/components/svgs';
 import { Link } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
 
 type LoginFormProps = {
+  isLoading: boolean;
   className?: string;
   submitHandler: (e: React.FormEvent<HTMLFormElement>) => void;
 };
 
-export function LoginForm({ className, submitHandler }: LoginFormProps) {
+export function LoginForm({
+  isLoading,
+  className,
+  submitHandler,
+}: LoginFormProps) {
   return (
     <div className={cn('flex flex-col gap-6', className)}>
       <Card className="overflow-hidden">
         <CardContent className="grid p-0 md:grid-cols-2">
           <form onSubmit={submitHandler} className="p-6 md:p-8">
             <div className="flex flex-col gap-6">
-              <div className="flex flex-col items-center gap-1 text-center">
-                <h1 className="text-2xl font-bold">Welcome back</h1>
-                <p className="text-balance text-muted-foreground text-sm">
-                  Login to your Fuckin' App
-                </p>
-              </div>
+              <h1 className="text-2xl font-bold">Welcome back</h1>
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -48,8 +49,10 @@ export function LoginForm({ className, submitHandler }: LoginFormProps) {
                 <Input id="password" type="password" name="password" />
               </div>
               <Button
+                disabled={isLoading}
                 type="submit"
-                className="w-full disabled:bg-primary/50 disabled:text-primary-foreground">
+                className="flex items-center w-full disabled:bg-primary/50 disabled:text-primary-foreground">
+                {isLoading && <Loader2 className="animate-spin" />}
                 Login
               </Button>
               <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">

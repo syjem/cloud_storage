@@ -15,7 +15,3 @@ api.add_resource(Home, "/", "/home")
 api.add_resource(Images, "/api/images")
 api.add_resource(ScreenShots, "/api/images/screen_shots")
 api.add_resource(Favorites, "/api/images/favorites")
-
-
-if __name__ == ('__main__'):
-    app.run(debug=True, port=8080)

@@ -34,7 +34,7 @@ class ScreenShots(Resource):
 
     def get(self):
         response = supabase.storage.from_("images").list(
-            "screen_shots",
+            "screenshots",
             {"sortBy": {"column": "created_at", "order": "desc"}}
         )
 
@@ -48,7 +48,7 @@ class ScreenShots(Resource):
                 "type": file["metadata"]["mimetype"],
                 "size": format_size(file["metadata"]["size"]),
                 "last_modified_at": format_date(file["metadata"]["lastModified"]),
-                "url": supabase.storage.from_("images").get_public_url(f"screen_shots/{file['name']}")
+                "url": supabase.storage.from_("images").get_public_url(f"screenshots/{file['name']}")
             }
             for file in images
         ]

@@ -1,9 +1,9 @@
 import React from 'react';
-import { data } from '@/data';
 import Header from '@/components/header';
-import ImageLinks from '@/pages/images/image-links';
+import Folders from '@/pages/images/folders';
 import { ImagesGalleryTable } from '@/pages/images/gallery';
 import { Outlet, useLocation } from 'react-router-dom';
+import { data } from '@/data';
 
 const Images = () => {
   const images = data.navMain[0];
@@ -15,7 +15,7 @@ const Images = () => {
       <div className="flex flex-1 flex-col gap-6 p-4 pt-0">
         {location.pathname === '/images' && (
           <React.Fragment>
-            <ImageLinks items={images.items} />
+            <Folders items={images.items} />
             <ImagesGalleryTable />
           </React.Fragment>
         )}
