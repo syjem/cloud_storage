@@ -13,7 +13,7 @@ class Home(Resource):
             },
             {
                 "method": "GET",
-                "url": "/api/images/screen_shots",
+                "url": "/api/images/screenshots",
                 "description": "Get all screen shot images"
             },
             {
@@ -22,11 +22,6 @@ class Home(Resource):
                 "description": "Sign in with Email and Password",
                 "body": ["email", "password"]
             },
-            {
-                "method": "GET",
-                "url": "/api/sign_out",
-                "description": "Sign out the current user"
-            }
         ]
 
         return jsonify(routes)

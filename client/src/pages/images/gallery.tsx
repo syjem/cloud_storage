@@ -1,6 +1,6 @@
 import axios from 'axios';
 import useSWR from 'swr';
-import LoaderSkeleton from './loading-state';
+import SkeletonLists from '@/pages/images/loaders/lists';
 import {
   Download,
   MoreHorizontal,
@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useViewStore } from '@/stores/images-view';
 import { FileUploader } from '@/pages/images/uploader';
+import SkeletonGallery from './loaders/gallery';
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -31,7 +32,8 @@ export const ImagesGalleryTable = () => {
   });
   const view = useViewStore((state) => state.view);
 
-  if (isLoading) return <LoaderSkeleton />;
+  if (isLoading)
+    return view === 'list' ? <SkeletonLists /> : <SkeletonGallery />;
   if (error) return <p>Error fetching images.</p>;
   if (!data || !data.images || data.images.length === 0)
     return <FileUploader />;

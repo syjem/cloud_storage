@@ -13,5 +13,5 @@ api = Api(app)
 # API routes
 api.add_resource(Home, "/", "/home")
 api.add_resource(Images, "/api/images")
-api.add_resource(ScreenShots, "/api/images/screen_shots")
+api.add_resource(ScreenShots, "/api/images/screenshots")
 api.add_resource(Favorites, "/api/images/favorites")

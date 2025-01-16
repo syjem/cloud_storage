@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { FileRejection, useDropzone } from 'react-dropzone';
 import AcceptedFilesPreviewer from '@/pages/images/accepted-files-preview';
 import RejectedFilesPreviewer from '@/pages/images/rejected-files-preview';
+import { UploadIcon } from 'lucide-react';
 
 export const FileUploader = ({
   onChange,
@@ -14,7 +15,6 @@ export const FileUploader = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (newFiles: File[]) => {
-    // Filter duplicate files
     const filteredFiles = newFiles.filter((newFile) => {
       return !files.some((file) => file.name === newFile.name);
     });
@@ -72,8 +72,26 @@ export const FileUploader = ({
     }
   };
 
-  const handleClick = () => {
-    fileInputRef.current?.click();
+  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(e.target.files || []);
+    const acceptedFiles: File[] = [];
+    const rejectedFiles: FileRejection[] = [];
+
+    selectedFiles.forEach((file) => {
+      if (
+        ['image/jpeg', 'image/png', 'image/webp'].includes(file.type) &&
+        file.size <= 2 * 1024 * 1024
+      ) {
+        acceptedFiles.push(file);
+      } else {
+        rejectedFiles.push({ file, errors: [] });
+      }
+    });
+
+    if (acceptedFiles.length > 0) handleFileChange(acceptedFiles);
+    if (rejectedFiles.length > 0) handleRejectedFiles(rejectedFiles);
+
+    e.target.value = '';
   };
 
   const removeFile = (name: string) => {
@@ -115,34 +133,35 @@ export const FileUploader = ({
     <React.Fragment>
       <div
         {...getRootProps({
-          className: 'border border-dashed border-secondary',
+          className: 'border border-dashed border-secondary h-72',
         })}>
         <motion.div
-          onClick={handleClick}
+          onClick={() => fileInputRef.current?.click()}
           whileHover="animate"
-          className="p-10 group/file block rounded-lg cursor-pointer w-full relative overflow-hidden">
+          className="p-4 group/file block rounded-lg cursor-pointer w-full relative overflow-hidden">
           <input
             ref={fileInputRef}
             id="file-upload-handle"
             type="file"
-            onChange={(e) => handleFileChange(Array.from(e.target.files || []))}
             className="hidden"
+            onChange={onChangeHandler}
+            multiple
           />
           <div className="absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,white,transparent)]">
             <GridPattern />
           </div>
           <div className="flex flex-col items-center justify-center">
-            <p className="relative z-20 font-sans font-bold text-neutral-700 dark:text-neutral-300 text-base">
-              Upload file
-            </p>
-            <p className="relative z-20 font-sans font-normal text-neutral-400 dark:text-neutral-400 text-base mt-2">
-              Drag 'n' drop your files here or click to upload
-            </p>
-            <AcceptedFilesPreviewer
-              files={files}
-              isDragActive={isDragActive}
-              removeFile={removeFile}
-            />
+            <UploadIcon className="size-14 shrink-0 border border-dashed border-gray-500 p-4 rounded-full" />
+            {isDragActive ? (
+              <p className="relative z-20 font-sans font-normal text-neutral-400 dark:text-neutral-400 text-base mt-2">
+                Drag file here ...
+              </p>
+            ) : (
+              <p className="relative z-20 font-sans font-normal text-neutral-400 dark:text-neutral-400 text-base mt-2">
+                Drag 'n' drop your files here or click to upload
+              </p>
+            )}
+            <AcceptedFilesPreviewer files={files} removeFile={removeFile} />
           </div>
         </motion.div>
       </div>

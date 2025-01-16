@@ -6,44 +6,25 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { useViewStore } from '@/stores/images-view';
-import { Link } from 'react-router-dom';
+import { FileUploader } from '@/pages/images/uploader';
 
 export const HeaderActions = ({ pathname }: { pathname: string }) => {
   const paths = pathname.split('/').filter(Boolean);
-  console.log(paths.includes('upload'));
-
-  const uploadLink =
-    paths.includes('images') && paths.length > 1
-      ? `/${paths.join('/')}/upload`
-      : '/images/upload';
 
   return (
     <div className="flex items-center gap-2 ml-auto mr-4">
       {paths.includes('images') && <DropDownViews />}
-      {paths.includes('upload') ? (
-        <Button
-          variant="ghost"
-          className={cn(
-            'text-xs font-normal text-foreground dark:hover:bg-header-action [&_svg]:size-3'
-          )}>
-          <Upload className="text-muted-foreground" />
-          Upload
-        </Button>
-      ) : (
-        <Button
-          variant="ghost"
-          asChild
-          className={cn(
-            'text-xs font-normal text-foreground dark:hover:bg-header-action [&_svg]:size-3'
-          )}>
-          <Link to={uploadLink}>
-            <Upload className="text-muted-foreground" />
-            Upload
-          </Link>
-        </Button>
-      )}
+      <UploadDialog />
     </div>
   );
 };
@@ -86,5 +67,31 @@ export function DropDownViews() {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+}
+
+function UploadDialog() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          variant="ghost"
+          className={cn(
+            'text-xs font-normal text-foreground dark:hover:bg-header-action [&_svg]:size-3'
+          )}>
+          <Upload className="text-muted-foreground" />
+          Upload
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Upload files</DialogTitle>
+          <DialogDescription>
+            Drag and drop your files here or click to browse.
+          </DialogDescription>
+        </DialogHeader>
+        <FileUploader />
+      </DialogContent>
+    </Dialog>
   );
 }
