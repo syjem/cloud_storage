@@ -2,8 +2,8 @@ import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FileRejection, useDropzone } from 'react-dropzone';
 import AcceptedFilesPreviewer from '@/pages/images/accepted-files-preview';
-import RejectedFilesPreviewer from '@/pages/images/rejected-files-preview';
 import { UploadIcon } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const FileUploader = ({
   onChange,
@@ -11,7 +11,6 @@ export const FileUploader = ({
   onChange?: (files: File[]) => void;
 }) => {
   const [files, setFiles] = useState<File[]>([]);
-  const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (newFiles: File[]) => {
@@ -28,48 +27,11 @@ export const FileUploader = ({
       ]);
     }
 
-    if (onChange) onChange(newFiles);
-  };
-
-  const handleRejectedFiles = async (fileRejections: FileRejection[]) => {
-    const updatedFiles = await Promise.all(
-      fileRejections.map(async (rejection) => {
-        const file = rejection.file;
-
-        if ('getFile' in file) {
-          const actualFile = await (
-            file as { getFile: () => Promise<File> }
-          ).getFile();
-
-          Object.assign(file, {
-            size: actualFile.size,
-            type: actualFile.type,
-            lastModified: actualFile.lastModified,
-            preview: URL.createObjectURL(actualFile),
-          });
-        }
-
-        return Object.assign(rejection, {
-          file: Object.assign(rejection.file, {
-            preview: URL.createObjectURL(rejection.file),
-          }),
-        });
-      })
-    );
-
-    // Filter duplicate files
-    const filteredRejectedFiles = updatedFiles.filter((newRejection) => {
-      return !rejectedFiles.some(
-        (rejection) => rejection.file.name === newRejection.file.name
-      );
-    });
-
-    if (filteredRejectedFiles.length > 0) {
-      setRejectedFiles((prevRejections) => [
-        ...prevRejections,
-        ...filteredRejectedFiles,
-      ]);
+    if (filteredFiles) {
+      toast.success(`${filteredFiles.length} file(s) uploaded successfully.`);
     }
+
+    if (onChange) onChange(newFiles);
   };
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,7 +51,6 @@ export const FileUploader = ({
     });
 
     if (acceptedFiles.length > 0) handleFileChange(acceptedFiles);
-    if (rejectedFiles.length > 0) handleRejectedFiles(rejectedFiles);
 
     e.target.value = '';
   };
@@ -104,21 +65,9 @@ export const FileUploader = ({
     });
   };
 
-  const removeRejectedFile = (name: string) => {
-    setRejectedFiles((prevRejections) => {
-      const fileToRemove = prevRejections.find(
-        (rejection) => rejection.file.name === name
-      );
-      if (fileToRemove) {
-        URL.revokeObjectURL(fileToRemove.file.preview);
-      }
-      return prevRejections.filter((rejection) => rejection.file.name !== name);
-    });
-  };
-
   const { getRootProps, isDragActive } = useDropzone({
     multiple: true,
-    maxSize: 2 * 1024 * 1024,
+    maxSize: 4 * 1024 * 1024,
     maxFiles: 5,
     accept: {
       'image/jpeg': [],
@@ -126,19 +75,18 @@ export const FileUploader = ({
       'image/webp': [],
     },
     onDrop: handleFileChange,
-    onDropRejected: handleRejectedFiles,
   });
 
   return (
     <React.Fragment>
       <div
         {...getRootProps({
-          className: 'border border-dashed border-secondary h-72',
+          className: 'border border-dashed border-sky-500 h-56',
         })}>
         <motion.div
           onClick={() => fileInputRef.current?.click()}
           whileHover="animate"
-          className="p-4 group/file block rounded-lg cursor-pointer w-full relative overflow-hidden">
+          className="p-4 group/file block rounded-lg cursor-pointer w-full h-full relative overflow-hidden">
           <input
             ref={fileInputRef}
             id="file-upload-handle"
@@ -150,8 +98,8 @@ export const FileUploader = ({
           <div className="absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,white,transparent)]">
             <GridPattern />
           </div>
-          <div className="flex flex-col items-center justify-center">
-            <UploadIcon className="size-14 shrink-0 border border-dashed border-gray-500 p-4 rounded-full" />
+          <div className="flex flex-col items-center justify-center gap-4 h-full">
+            <UploadIcon className="size-14 shrink-0 border border-dashed border-sky-500 p-4 rounded-full z-50" />
             {isDragActive ? (
               <p className="relative z-20 font-sans font-normal text-neutral-400 dark:text-neutral-400 text-base mt-2">
                 Drag file here ...
@@ -161,14 +109,10 @@ export const FileUploader = ({
                 Drag 'n' drop your files here or click to upload
               </p>
             )}
-            <AcceptedFilesPreviewer files={files} removeFile={removeFile} />
           </div>
         </motion.div>
       </div>
-      <RejectedFilesPreviewer
-        rejectedFiles={rejectedFiles}
-        removeRejectedFile={removeRejectedFile}
-      />
+      <AcceptedFilesPreviewer files={files} removeFile={removeFile} />
     </React.Fragment>
   );
 };

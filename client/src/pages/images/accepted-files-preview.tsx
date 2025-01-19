@@ -11,16 +11,16 @@ type AcceptedFilesType = {
 
 const AcceptedFilesPreviewer = ({ files, removeFile }: AcceptedFilesType) => {
   return (
-    <div className="relative w-full mt-10 max-w-lg mx-auto">
+    <div className="relative w-full mx-auto">
       {files.length > 0 && (
-        <ScrollArea className="h-44">
+        <ScrollArea className="absolute w-[103%] h-52 pr-4">
           {files.length > 0 &&
             files.map((file, idx) => (
               <motion.div
                 key={'file' + idx}
                 layoutId={idx === 0 ? 'file-upload' : 'file-upload-' + idx}
                 className={cn(
-                  'group relative z-40 bg-white dark:bg-neutral-900 gap-4 flex items-center justify-start md:h-24 p-4 my-4 w-[95%] mx-auto rounded-md',
+                  'group relative z-40 bg-white dark:bg-neutral-900 gap-4 flex items-center justify-start md:h-24 p-4 my-2 w-full rounded-md',
                   'shadow-sm'
                 )}>
                 <Button
