@@ -1,19 +1,25 @@
 import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FileRejection, useDropzone } from 'react-dropzone';
+import { useDropzone } from 'react-dropzone';
 import AcceptedFilesPreviewer from '@/pages/images/accepted-files-preview';
 import { UploadIcon } from 'lucide-react';
 import { toast } from 'sonner';
+import { fetcher, getApiUrl } from '@/pages/images/upload-file';
+import { useLocation } from 'react-router-dom';
+import useImages from '@/hooks/use-mutate';
 
-export const FileUploader = ({
-  onChange,
-}: {
-  onChange?: (files: File[]) => void;
-}) => {
+type FileUploaderType = {
+  onCloseDialog: () => void;
+};
+
+export const FileUploader = ({ onCloseDialog }: FileUploaderType) => {
+  const location = useLocation();
+  const url = getApiUrl(location.pathname);
+  const { mutate } = useImages(url);
   const [files, setFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (newFiles: File[]) => {
+  const handleFileChange = async (newFiles: File[]) => {
     const filteredFiles = newFiles.filter((newFile) => {
       return !files.some((file) => file.name === newFile.name);
     });
@@ -27,42 +33,52 @@ export const FileUploader = ({
       ]);
     }
 
-    if (filteredFiles) {
-      toast.success(`${filteredFiles.length} file(s) uploaded successfully.`);
-    }
+    let toastId = null;
 
-    if (onChange) onChange(newFiles);
+    try {
+      toastId = toast.loading(`Uploading ${filteredFiles.length} file(s).`);
+
+      const formData = new FormData();
+      filteredFiles.forEach((file) => formData.append('files', file));
+
+      await fetcher(url, formData);
+
+      if (toastId) toast.dismiss(toastId);
+      toast.success(`${filteredFiles.length} file(s) uploaded successfully.`);
+
+      filteredFiles.forEach((file) => {
+        if (file.preview) {
+          URL.revokeObjectURL(file.preview);
+        }
+      });
+
+      setFiles([]);
+      onCloseDialog();
+      mutate();
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to upload files. Please try again.');
+    } finally {
+      if (toastId) toast.dismiss(toastId);
+    }
   };
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files || []);
     const acceptedFiles: File[] = [];
-    const rejectedFiles: FileRejection[] = [];
 
     selectedFiles.forEach((file) => {
       if (
         ['image/jpeg', 'image/png', 'image/webp'].includes(file.type) &&
-        file.size <= 2 * 1024 * 1024
+        file.size <= 4 * 1024 * 1024
       ) {
         acceptedFiles.push(file);
-      } else {
-        rejectedFiles.push({ file, errors: [] });
       }
     });
 
     if (acceptedFiles.length > 0) handleFileChange(acceptedFiles);
 
     e.target.value = '';
-  };
-
-  const removeFile = (name: string) => {
-    setFiles((prevFiles) => {
-      const fileToRemove = prevFiles.find((file) => file.name === name);
-      if (fileToRemove) {
-        URL.revokeObjectURL(fileToRemove.preview);
-      }
-      return prevFiles.filter((file) => file.name !== name);
-    });
   };
 
   const { getRootProps, isDragActive } = useDropzone({
@@ -112,7 +128,7 @@ export const FileUploader = ({
           </div>
         </motion.div>
       </div>
-      <AcceptedFilesPreviewer files={files} removeFile={removeFile} />
+      <AcceptedFilesPreviewer files={files} />
     </React.Fragment>
   );
 };

@@ -3,7 +3,6 @@ import useSWR from 'swr';
 import SkeletonLists from '@/pages/images/loaders/lists';
 import { useViewStore } from '@/stores/images-view';
 import { Gallery, Table } from '@/pages/images/gallery';
-import { FileUploader } from '@/pages/images/uploader';
 import { Outlet, useLocation } from 'react-router-dom';
 import SkeletonGallery from './loaders/gallery';
 
@@ -25,7 +24,7 @@ const Screenshots = () => {
     return view === 'list' ? <SkeletonLists /> : <SkeletonGallery />;
   if (error) return <p>Error fetching images.</p>;
   if (!data || !data.images || data.images.length === 0)
-    return <FileUploader />;
+    return <p>No images found.</p>;
 
   return location.pathname === '/images/screenshots' ? (
     view === 'list' ? (

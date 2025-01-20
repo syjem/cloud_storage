@@ -17,6 +17,8 @@ import {
 import { cn } from '@/lib/utils';
 import { useViewStore } from '@/stores/images-view';
 import { FileUploader } from '@/pages/images/uploader';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 export const HeaderActions = ({ pathname }: { pathname: string }) => {
   const paths = pathname.split('/').filter(Boolean);
@@ -71,8 +73,30 @@ export function DropDownViews() {
 }
 
 function UploadDialog() {
+  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const addQueryParam = () => {
+    const params = new URLSearchParams(location.search);
+    params.set('upload', 'true');
+    navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+  };
+
+  const removeQueryParam = () => {
+    const params = new URLSearchParams(location.search);
+    params.delete('upload');
+    navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (open) addQueryParam();
+    else removeQueryParam();
+  };
+
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button
           variant="ghost"
@@ -90,7 +114,12 @@ function UploadDialog() {
             Drag and drop your files here or click to browse.
           </DialogDescription>
         </DialogHeader>
-        <FileUploader />
+        <FileUploader
+          onCloseDialog={() => {
+            setIsOpen(!isOpen);
+            removeQueryParam();
+          }}
+        />
       </DialogContent>
     </Dialog>
   );

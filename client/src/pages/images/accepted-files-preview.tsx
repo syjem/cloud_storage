@@ -1,37 +1,29 @@
-import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
-import { X } from 'lucide-react';
 
 type AcceptedFilesType = {
   files: File[];
-  removeFile: (name: string) => void;
 };
 
-const AcceptedFilesPreviewer = ({ files, removeFile }: AcceptedFilesType) => {
+const AcceptedFilesPreviewer = ({ files }: AcceptedFilesType) => {
   return (
     <div className="relative w-full mx-auto">
       {files.length > 0 && (
-        <ScrollArea className="absolute w-[103%] h-52 pr-4">
+        <ScrollArea
+          className={cn(
+            'absolute w-[103%] pr-4',
+            files.length > 1 ? 'h-52' : 'h-auto'
+          )}>
           {files.length > 0 &&
             files.map((file, idx) => (
               <motion.div
                 key={'file' + idx}
                 layoutId={idx === 0 ? 'file-upload' : 'file-upload-' + idx}
                 className={cn(
-                  'group relative z-40 bg-white dark:bg-neutral-900 gap-4 flex items-center justify-start md:h-24 p-4 my-2 w-full rounded-md',
+                  'relative z-40 bg-white dark:bg-neutral-900 gap-4 flex items-center justify-start md:h-24 p-4 my-2 w-full rounded-md',
                   'shadow-sm'
                 )}>
-                <Button
-                  size="icon"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeFile(file.name);
-                  }}
-                  className="w-6 h-6 rounded-full absolute -top-2 right-0 invisible group-hover:visible">
-                  <X />
-                </Button>
                 <img
                   src={file.preview}
                   width={50}

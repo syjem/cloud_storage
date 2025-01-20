@@ -2,8 +2,8 @@ from flask import jsonify
 from flask_restful import Resource
 from storage import supabase
 
-from utils.format_date import format_date
 from utils.format_size import format_size
+from utils.image_data import image_data
 
 
 class Images(Resource):
@@ -12,22 +12,12 @@ class Images(Resource):
         response = supabase.storage.from_("images").list()
 
         images = [file for file in response if file['id']]
-
         total_size = sum(file["metadata"]["size"] for file in images)
 
-        image_data = [
-            {
-                "name": file["name"],
-                "created_at": format_date(file["created_at"]),
-                "type": file["metadata"]["mimetype"],
-                "size": format_size(file["metadata"]["size"]),
-                "last_modified_at": format_date(file["metadata"]["lastModified"]),
-                "url": supabase.storage.from_("images").get_public_url(file["name"])
-            }
-            for file in images
-        ]
+        return jsonify({"images": image_data(images), "total_size": format_size(total_size)})
 
-        return jsonify({"images": image_data, "total_size": format_size(total_size)})
+    def post(self):
+        pass
 
 
 class ScreenShots(Resource):
@@ -41,19 +31,7 @@ class ScreenShots(Resource):
         images = [file for file in response if file['id']]
         total_size = sum(file["metadata"]["size"] for file in images)
 
-        image_data = [
-            {
-                "name": file["name"],
-                "created_at": format_date(file["created_at"]),
-                "type": file["metadata"]["mimetype"],
-                "size": format_size(file["metadata"]["size"]),
-                "last_modified_at": format_date(file["metadata"]["lastModified"]),
-                "url": supabase.storage.from_("images").get_public_url(f"screenshots/{file['name']}")
-            }
-            for file in images
-        ]
-
-        return jsonify({"images": image_data, "total_size": format_size(total_size)})
+        return jsonify({"images": image_data(images, folder_name="screenshots"), "total_size": format_size(total_size)})
 
 
 class Favorites(Resource):
@@ -67,16 +45,4 @@ class Favorites(Resource):
         images = [file for file in response if file['id']]
         total_size = sum(file["metadata"]["size"] for file in images)
 
-        image_data = [
-            {
-                "name": file["name"],
-                "created_at": format_date(file["created_at"]),
-                "type": file["metadata"]["mimetype"],
-                "size": format_size(file["metadata"]["size"]),
-                "last_modified_at": format_date(file["metadata"]["lastModified"]),
-                "url": supabase.storage.from_("images").get_public_url(f"favorites/{file['name']}")
-            }
-            for file in images
-        ]
-
-        return jsonify({"images": image_data, "total_size": format_size(total_size)})
+        return jsonify({"images": image_data(images, folder_name="favorites"), "total_size": format_size(total_size)})
