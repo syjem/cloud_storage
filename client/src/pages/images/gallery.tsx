@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useViewStore } from '@/stores/images-view';
 import SkeletonGallery from './loaders/gallery';
-import useImages from '@/hooks/use-mutate';
+import { useImages } from '@/hooks/use-mutate';
 
 const baseUrl = import.meta.env.VITE_API_URL as string;
 const url = `${baseUrl}/api/images`;
@@ -70,8 +70,9 @@ export const Table = ({
         {images.map((image: ImageType) => (
           <li
             key={image.name}
+            title={image.name}
             className="group grid grid-cols-5 cursor-pointer hover:bg-muted/75 px-4">
-            <span className="flex items-center gap-2 text-sm text-muted-foreground py-4">
+            <span className="flex items-center gap-2 text-sm text-muted-foreground py-4 w-[95%] truncate">
               <img
                 src={image.url}
                 alt={image.name}

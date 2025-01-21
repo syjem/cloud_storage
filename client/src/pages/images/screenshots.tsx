@@ -1,12 +1,9 @@
-import axios from 'axios';
-import useSWR from 'swr';
 import SkeletonLists from '@/pages/images/loaders/lists';
 import { useViewStore } from '@/stores/images-view';
 import { Gallery, Table } from '@/pages/images/gallery';
 import { Outlet, useLocation } from 'react-router-dom';
 import SkeletonGallery from './loaders/gallery';
-
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+import { useScreenShots } from '@/hooks/use-mutate';
 
 const baseUrl = import.meta.env.VITE_API_URL as string;
 const url = `${baseUrl}/api/images/screenshots`;
@@ -14,11 +11,7 @@ const url = `${baseUrl}/api/images/screenshots`;
 const Screenshots = () => {
   const location = useLocation();
   const view = useViewStore((state) => state.view);
-  const { data, error, isLoading } = useSWR(url, fetcher, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-    refreshInterval: 0,
-  });
+  const { data, error, isLoading } = useScreenShots(url);
 
   if (isLoading)
     return view === 'list' ? <SkeletonLists /> : <SkeletonGallery />;

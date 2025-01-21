@@ -1,5 +1,5 @@
-from flask import jsonify
-from flask_restful import Resource
+from flask import jsonify, request
+from flask_restful import abort, Resource
 from storage import supabase
 
 from utils.format_size import format_size
@@ -17,7 +17,24 @@ class Images(Resource):
         return jsonify({"images": image_data(images), "total_size": format_size(total_size)})
 
     def post(self):
-        pass
+
+        if 'files' not in request.files:
+            abort(400, error="No files provided.")
+
+        files = request.files.getlist('files')
+
+        for file in files:
+            file_path = file.filename
+            file_content = file.read()
+            content_type = file.mimetype
+            response = supabase.storage.from_("images").upload(
+                file=file_content,
+                path=file_path,
+                file_options={"cache-control": "3600",
+                              "content-type": content_type, "upsert": "false"},
+            )
+
+        return jsonify({"message": "Files uploaded successfully"})
 
 
 class ScreenShots(Resource):
@@ -33,6 +50,26 @@ class ScreenShots(Resource):
 
         return jsonify({"images": image_data(images, folder_name="screenshots"), "total_size": format_size(total_size)})
 
+    def post(self):
+
+        if 'files' not in request.files:
+            abort(400, error="No files provided.")
+
+        files = request.files.getlist('files')
+
+        for file in files:
+            file_path = f"screenshots/{file.filename}"
+            file_content = file.read()
+            content_type = file.mimetype
+            response = supabase.storage.from_("images").upload(
+                file=file_content,
+                path=file_path,
+                file_options={"cache-control": "3600",
+                              "content-type": content_type, "upsert": "false"},
+            )
+
+        return jsonify({"message": "Files uploaded successfully"})
+
 
 class Favorites(Resource):
 
@@ -46,3 +83,23 @@ class Favorites(Resource):
         total_size = sum(file["metadata"]["size"] for file in images)
 
         return jsonify({"images": image_data(images, folder_name="favorites"), "total_size": format_size(total_size)})
+
+    def post(self):
+
+        if 'files' not in request.files:
+            abort(400, error="No files provided.")
+
+        files = request.files.getlist('files')
+
+        for file in files:
+            file_path = f"favorites/{file.filename}"
+            file_content = file.read()
+            content_type = file.mimetype
+            response = supabase.storage.from_("images").upload(
+                file=file_content,
+                path=file_path,
+                file_options={"cache-control": "3600",
+                              "content-type": content_type, "upsert": "false"},
+            )
+
+        return jsonify({"message": "Files uploaded successfully"})

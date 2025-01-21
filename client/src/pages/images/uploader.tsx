@@ -6,7 +6,7 @@ import { UploadIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { fetcher, getApiUrl } from '@/pages/images/upload-file';
 import { useLocation } from 'react-router-dom';
-import useImages from '@/hooks/use-mutate';
+import { useImages, useFavorites, useScreenShots } from '@/hooks/use-mutate';
 
 type FileUploaderType = {
   onCloseDialog: () => void;
@@ -15,7 +15,9 @@ type FileUploaderType = {
 export const FileUploader = ({ onCloseDialog }: FileUploaderType) => {
   const location = useLocation();
   const url = getApiUrl(location.pathname);
-  const { mutate } = useImages(url);
+  const { mutate: mutateImages } = useImages(url);
+  const { mutate: mutateFavorites } = useFavorites(url);
+  const { mutate: mutateScreenshots } = useScreenShots(url);
   const [files, setFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -54,7 +56,10 @@ export const FileUploader = ({ onCloseDialog }: FileUploaderType) => {
 
       setFiles([]);
       onCloseDialog();
-      mutate();
+
+      if (location.pathname === '/images/screenshots') mutateScreenshots();
+      else if (location.pathname === '/images/favorites') mutateFavorites();
+      else mutateImages();
     } catch (error) {
       console.error(error);
       toast.error('Failed to upload files. Please try again.');
