@@ -14,7 +14,7 @@ class Images(Resource):
         images = [file for file in response if file['id']]
         total_size = sum(file["metadata"]["size"] for file in images)
 
-        return jsonify({"images": image_data(images), "total_size": format_size(total_size)})
+        return jsonify({"raw_data": images, "images": image_data(images), "total_size": format_size(total_size)})
 
     def post(self):
 

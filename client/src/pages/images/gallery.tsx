@@ -1,21 +1,25 @@
-import SkeletonLists from '@/pages/images/loaders/lists';
+import SkeletonLists from "@/pages/images/loaders/lists";
 import {
   Download,
   MoreHorizontal,
   SquarePenIcon,
   Trash2Icon,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useViewStore } from '@/stores/images-view';
-import SkeletonGallery from './loaders/gallery';
-import { useImages } from '@/hooks/use-mutate';
+} from "@/components/ui/dropdown-menu";
+import { useViewStore } from "@/stores/images-view";
+import SkeletonGallery from "./loaders/gallery";
+import { useImages } from "@/hooks/use-mutate";
+import axios from "axios";
+import { saveAs } from "file-saver";
+import { useLocation } from "react-router-dom";
+import { toast } from "sonner";
 
 const baseUrl = import.meta.env.VITE_API_URL as string;
 const url = `${baseUrl}/api/images`;
@@ -25,19 +29,19 @@ export const ImagesGalleryTable = () => {
   const view = useViewStore((state) => state.view);
 
   if (isLoading)
-    return view === 'list' ? <SkeletonLists /> : <SkeletonGallery />;
+    return view === "list" ? <SkeletonLists /> : <SkeletonGallery />;
   if (error) return <p>Error fetching images.</p>;
   if (!data || !data.images || data.images.length === 0)
     return <p>No images found.</p>;
 
-  return view === 'list' ? (
+  return view === "list" ? (
     <Table images={data.images} totalSize={data.total_size} />
   ) : (
     <Gallery images={data.images} />
   );
 };
 
-const columns = ['Name', 'Size', 'Type', 'Created at', 'Last Modified at'];
+const columns = ["Name", "Size", "Type", "Created at", "Last Modified at"];
 
 type ImageType = {
   name: string;
@@ -71,7 +75,8 @@ export const Table = ({
           <li
             key={image.name}
             title={image.name}
-            className="group grid grid-cols-5 cursor-pointer hover:bg-muted/75 px-4">
+            className="group grid grid-cols-5 cursor-pointer hover:bg-muted/75 px-4"
+          >
             <span className="flex items-center gap-2 text-sm text-muted-foreground py-4 w-[95%] truncate">
               <img
                 src={image.url}
@@ -95,7 +100,7 @@ export const Table = ({
               <span className="text-sm text-muted-foreground py-4">
                 {image.last_modified_at}
               </span>
-              <TableDropDownMenu />
+              <TableDropDownMenu name={image.name} />
             </div>
           </li>
         ))}
@@ -110,16 +115,48 @@ export const Table = ({
   );
 };
 
-const TableDropDownMenu = () => {
+const TableDropDownMenu = ({ name }: { name: string }) => {
+  const location = useLocation();
+  const pathname = location.pathname.slice(1);
+
+  const downloadFile = async (url: string, filePath: string) => {
+    try {
+      const response = await axios.post(
+        url,
+        { path: filePath },
+        { responseType: "blob" }
+      );
+
+      const contentDisposition = response.headers["content-disposition"];
+      const fileName =
+        contentDisposition?.match(/filename="(.+)"/)?.[1] || name;
+
+      saveAs(response.data, fileName);
+    } catch (error) {
+      console.error("Error downloading file:", error);
+      toast.error("Failed to download file. Please try again.");
+    }
+  };
+
+  const downloadHandler = async () => {
+    const url = `${baseUrl}/api/images/download`;
+    const filePath = `${pathname}/${name}`;
+    console.log(url);
+    console.log(filePath);
+    await downloadFile(url, filePath);
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         asChild
-        className="data-[state=open]:visible invisible group-hover:visible">
+        className="data-[state=open]:visible invisible group-hover:visible"
+      >
         <Button
           size="icon"
           variant="ghost"
-          className="text-muted-foreground hover:bg-inherit">
+          className="text-muted-foreground hover:bg-inherit"
+        >
           <span className="sr-only">Open actions</span>
           <MoreHorizontal className="h-4 w-4 rotate-90 " />
         </Button>
@@ -129,7 +166,7 @@ const TableDropDownMenu = () => {
           <SquarePenIcon className="text-muted-foreground" />
           Rename
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem title={`Download ${name}`} onClick={downloadHandler}>
           <Download className="text-muted-foreground" />
           Download
         </DropdownMenuItem>

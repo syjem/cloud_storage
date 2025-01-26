@@ -10,7 +10,7 @@ const Folders = ({ items }: { items: NavMainItem[] }) => {
           key={item.title}
           to={item.url}
           className={cn(
-            'flex items-center justify-center gap-2 py-3 rounded-lg bg-muted/75 hover:bg-muted/65'
+            'flex items-center justify-center gap-3 py-2 rounded-lg bg-muted/75 hover:bg-muted/65'
           )}>
           {item.icon && <item.icon className="w-4 h-4 " />}
           <span className="font-medium text-foreground">{item.title}</span>
